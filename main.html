@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Custom Review Generator</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        max-width: 500px;
+        margin: 40px auto;
+      }
+      textarea,
+      input {
+        width: 100%;
+        margin: 5px 0;
+        padding: 8px;
+      }
+      #stars span {
+        font-size: 28px;
+        cursor: pointer;
+        color: #ccc;
+      }
+      #stars span.selected {
+        color: gold;
+      }
+      #output {
+        white-space: pre-wrap;
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-top: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Custom Review Generator</h2>
+    <input id="title" placeholder="Title" />
+    <textarea id="description" placeholder="Description"></textarea>
+
+    <div id="stars">
+      <span data-value="1">★</span>
+      <span data-value="2">★</span>
+      <span data-value="3">★</span>
+      <span data-value="4">★</span>
+      <span data-value="5">★</span>
+    </div>
+
+    <input id="tags" placeholder="Tags (comma or space separated)" />
+    <input id="url" placeholder="URL (optional)" />
+    <button onclick="generate()">Generate</button>
+    <div id="output"></div>
+
+    <script>
+      let selectedRate = 0;
+      const stars = document.querySelectorAll("#stars span");
+
+      stars.forEach((star) => {
+        star.addEventListener("click", () => {
+          selectedRate = Number(star.dataset.value);
+          stars.forEach((s, i) => {
+            s.classList.toggle("selected", i < selectedRate);
+          });
+        });
+      });
+
+      function generate() {
+        const title = document.getElementById("title").value.trim();
+        const desc = document.getElementById("description").value.trim();
+        const tagsInput = document.getElementById("tags").value.trim();
+        const url = document.getElementById("url").value.trim();
+
+        const tagList = tagsInput
+          ? tagsInput
+              .split(/[,，\s]+/)
+              .filter(Boolean)
+              .map((t) => `#${t}`)
+              .join(" ")
+          : "";
+
+        const starsDisplay = "★★★★★☆☆☆☆☆".slice(
+          5 - selectedRate,
+          10 - selectedRate
+        );
+        const output = `${title}\n${desc}\n推荐指数: ${selectedRate} (${starsDisplay})\n标签: ${tagList}\n${url}`;
+        document.getElementById("output").textContent = output;
+      }
+    </script>
+  </body>
+</html>
